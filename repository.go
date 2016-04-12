@@ -32,14 +32,6 @@ type tmeAccessConfig struct {
 	token    string
 }
 
-func (t *tmeRepository) GetMaxRecords() int {
-	return t.maxRecords
-}
-
-func (t *tmeRepository) GetTaxonomyName() string {
-	return t.taxonomyName
-}
-
 func NewTmeRepository(client httpClient, tmeBaseURL string, userName string, password string, token string, maxRecords int, slices int, taxonomyName string) Repository {
 	return &tmeRepository{httpClient: client, tmeBaseURL: tmeBaseURL, accessConfig: tmeAccessConfig{userName: userName, password: password, token: token}, maxRecords: maxRecords, slices: slices, taxonomyName: taxonomyName}
 }
@@ -110,7 +102,7 @@ func (t *tmeRepository) GetTmeTermsInChunks(startPosition int, maxRecords int) (
 }
 
 func (t *tmeRepository) GetTmeTermById(rawId string) ([]byte, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/authorityfiles/%s/terms/%s", t.tmeBaseURL, t.GetTaxonomyName(), rawId), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/authorityfiles/%s/terms/%s", t.tmeBaseURL, t.taxonomyName, rawId), nil)
 	if err != nil {
 		return []byte{}, err
 	}

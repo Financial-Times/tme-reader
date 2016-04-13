@@ -12,6 +12,5 @@ The service exposes endpoints for getting all the terms and for getting a term b
 
 Available methods:
 
-* GetTmeTermsFromIndex(int) ([]byte, error)
-* GetTmeTermsInChunks(int, int) ([]byte, error)	
-* GetTmeTermById(string) ([]byte, error)
+* GetTmeTerms() ([]interface{}, error)	
+* GetTmeTermById(string) (interface{}, error)

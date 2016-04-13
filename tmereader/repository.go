@@ -1,4 +1,4 @@
-package tme
+package tmereader
 
 import (
 	"fmt"

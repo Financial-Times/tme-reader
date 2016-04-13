@@ -8,7 +8,7 @@ import (
 )
 
 type Repository interface {
-	GetTmeTerms() ([]interface{}, error)
+	GetTmeTermsFromIndex(int) ([]interface{}, error)
 	GetTmeTermById(string) (interface{}, error)
 }
 
@@ -42,7 +42,7 @@ func NewTmeRepository(client httpClient, tmeBaseURL string, userName string, pas
 	return &tmeRepository{httpClient: client, tmeBaseURL: tmeBaseURL, accessConfig: tmeAccessConfig{userName: userName, password: password, token: token}, maxRecords: maxRecords, slices: slices, taxonomyName: taxonomyName, transformer: modelTransformer}
 }
 
-func (t *tmeRepository) GetTmeTerms() ([]interface{}, error) {
+func (t *tmeRepository) GetTmeTermsFromIndex(startRecord int) ([]interface{}, error) {
 	chunks := t.maxRecords / t.slices
 
 	type dataChunkCollection struct {
@@ -55,7 +55,7 @@ func (t *tmeRepository) GetTmeTerms() ([]interface{}, error) {
 		var wg sync.WaitGroup
 		wg.Add(t.slices)
 		for i := 0; i < t.slices; i++ {
-			startPosition := i * chunks
+			startPosition := startRecord + i*chunks
 
 			go func(startPosition int) {
 				tmeTermsChunk, err := t.getTmeTermsInChunks(startPosition, chunks)

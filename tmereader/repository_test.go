@@ -62,7 +62,7 @@ func TestGetTmeTermsInChunks(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		actualTerms, err := test.repo.GetTmeTerms()
+		actualTerms, err := test.repo.GetTmeTermsFromIndex(0)
 		assert.Equal(len(test.expectedTerms), len(actualTerms), fmt.Sprintf("ExpectedTerms and ActualTerms vector size differ."))
 		for _, expTerm := range test.expectedTerms {
 			assert.Contains(actualTerms, expTerm, fmt.Sprintf("Actual taxonomy misses expected term %s", expTerm))
@@ -94,7 +94,7 @@ func TestGetTmeTerms(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		actualTerms, err := test.repo.GetTmeTerms()
+		actualTerms, err := test.repo.GetTmeTermsFromIndex(0)
 		assert.Equal(len(test.expectedTerms), len(actualTerms), fmt.Sprintf("ExpectedTerms and ActualTerms vector size differ."))
 		for _, expTerm := range test.expectedTerms {
 			assert.Contains(actualTerms, expTerm, fmt.Sprintf("Actual taxonomy misses expected term %s", expTerm))

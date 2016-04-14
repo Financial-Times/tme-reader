@@ -2,7 +2,7 @@
 
 [![Circle CI](https://circleci.com/gh/Financial-Times/tme-reader/tree/master.png?style=shield)](https://circleci.com/gh/Financial-Times/tme-reader/tree/master)
 
-Retrieves General Terms from TME as a byte array.
+Retrieves General Terms from TME as a list of interfaces, letting the main application to decide how an output will look like.
 
 The service exposes endpoints for getting all the terms and for getting a term by a tmeID.
 
@@ -12,8 +12,8 @@ The service exposes endpoints for getting all the terms and for getting a term b
 
 Available methods:
 
-* GetTmeTermsFromIndex(int) ([]interface{}, error) - returns a set of terms, having a maximum of `maxRecord` elements starting from the provided index 	
-* GetTmeTermById(string) (interface{}, error) - returns the term details, obtained by the tme term identifier
+* GetTmeTermsFromIndex(index int) (tmeTerms []interface{}, error) - returns a set of terms, having a maximum of `maxRecord` elements starting from the provided index 	
+* GetTmeTermById(tmeID string) (tmeTerm interface{}, error) - returns the term details, obtained by the tme term identifier
 
 # In order to run:
 
@@ -23,8 +23,8 @@ Create a new repository:
 
 The modelTransformer should implement the following methods, according to his own model type:
 
-* UnMarshallTaxonomy([]byte) (interface{}, error)
-* UnMarshallTerm([]byte) (interface{}, error)
-* GetTermsFromTaxonomy(interface{}) []interface{}
+* UnMarshallTaxonomy(contents []byte) (taxonomy interface{}, error) - loading xml data into a taxonomy model
+* UnMarshallTerm(content []byte) (tmeTerm interface{}, error) - loading xml data into a tmeTerm model
+* GetTermsFromTaxonomy(taxonomy interface{}) (tmeTerms []interface{}) - method allowing to get the inner elements(tmeTerms) of a taxonomy
 
 

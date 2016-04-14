@@ -115,13 +115,18 @@ type term struct {
 	RawID         string `xml:"id"`
 }
 
-func (*dummyTransformer) UnMarshallTaxonomy(contents []byte) (interface{}, error) {
-	tax := dummyModel{}
-	err := xml.Unmarshal(contents, &tax)
+func (*dummyTransformer) UnMarshallTaxonomy(contents []byte) ([]interface{}, error) {
+	taxonomy := dummyModel{}
+	err := xml.Unmarshal(contents, &taxonomy)
 	if err != nil {
-		return dummyModel{}, err
+		return nil, err
 	}
-	return tax, nil
+
+	var interfaceSlice []interface{} = make([]interface{}, len(taxonomy.Terms))
+	for i, d := range taxonomy.Terms {
+		interfaceSlice[i] = d
+	}
+	return interfaceSlice, nil
 }
 
 func (*dummyTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
@@ -131,17 +136,6 @@ func (*dummyTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 		return term{}, err
 	}
 	return dummyTerm, nil
-}
-
-func (d *dummyTransformer) GetTermsFromTaxonomy(tax interface{}) (terms []interface{}) {
-
-	taxonomy := tax.(dummyModel)
-
-	var interfaceSlice []interface{} = make([]interface{}, len(taxonomy.Terms))
-	for i, d := range taxonomy.Terms {
-		interfaceSlice[i] = d
-	}
-	return interfaceSlice
 }
 
 func repo(c dummyClient) Repository {

@@ -17,9 +17,8 @@ type httpClient interface {
 }
 
 type modelTransformer interface {
-	UnMarshallTaxonomy([]byte) (interface{}, error)
-	UnMarshallTerm([]byte) (interface{}, error)
-	GetTermsFromTaxonomy(interface{}) []interface{}
+	UnMarshallTaxonomy(contents []byte) (tmeTerms []interface{}, error error)
+	UnMarshallTerm(content []byte) (tmeTerm interface{}, error error)
 }
 
 type tmeRepository struct {
@@ -104,11 +103,11 @@ func (t *tmeRepository) getTmeTermsInChunks(startPosition int, maxRecords int) (
 		return nil, err
 	}
 
-	taxonomy, err := t.transformer.UnMarshallTaxonomy(contents)
+	tmeTerms, err := t.transformer.UnMarshallTaxonomy(contents)
 	if err != nil {
 		return nil, err
 	}
-	return t.transformer.GetTermsFromTaxonomy(taxonomy), nil
+	return tmeTerms, nil
 }
 
 func (t *tmeRepository) GetTmeTermById(rawId string) (interface{}, error) {

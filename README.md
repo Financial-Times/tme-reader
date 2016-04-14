@@ -23,8 +23,6 @@ Create a new repository:
 
 The modelTransformer should implement the following methods, according to his own model type:
 
-* UnMarshallTaxonomy(contents []byte) (taxonomy interface{}, error) - loading xml data into a taxonomy model
+* UnMarshallTaxonomy(contents []byte) (tmeTerms []interface{}, error) - loading xml data into list of terms ([]tmeTerms)
 * UnMarshallTerm(content []byte) (tmeTerm interface{}, error) - loading xml data into a tmeTerm model
-* GetTermsFromTaxonomy(taxonomy interface{}) (tmeTerms []interface{}) - method allowing to get the inner elements(tmeTerms) of a taxonomy
-
 

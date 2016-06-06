@@ -139,7 +139,7 @@ func (*dummyTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 }
 
 func repo(c dummyClient) Repository {
-	return &tmeRepository{httpClient: &c, tmeBaseURL: c.tmeBaseURL, accessConfig: tmeAccessConfig{userName: "test", password: "test", token: "test"}, maxRecords: 100, slices: 1, taxonomyName: "GL", transformer: new(dummyTransformer)}
+	return &tmeRepository{httpClient: &c, tmeBaseURL: c.tmeBaseURL, accessConfig: tmeAccessConfig{userName: "test", password: "test", token: "test"}, maxRecords: 100, slices: 1, taxonomyName: "GL", source:AuthorityFiles, transformer: new(dummyTransformer)}
 }
 
 type dummyClient struct {

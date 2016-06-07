@@ -7,6 +7,30 @@ import (
 	"sync"
 )
 
+type TmeSource interface {
+	String() string
+	PathSuffix() string
+}
+
+type AuthorityFiles struct{}
+type KnowledgeBases struct{}
+
+func (s *AuthorityFiles) String() string {
+	return "authorityfiles"
+}
+
+func (s *AuthorityFiles) PathSuffix() string {
+	return "terms"
+}
+
+func (s *KnowledgeBases) String() string {
+	return "knowledgebases"
+}
+
+func (s *KnowledgeBases) PathSuffix() string {
+	return "eng/categories"
+}
+
 type Repository interface {
 	GetTmeTermsFromIndex(int) ([]interface{}, error)
 	GetTmeTermById(string) (interface{}, error)
@@ -29,6 +53,7 @@ type tmeRepository struct {
 	slices       int
 	taxonomyName string
 	transformer  modelTransformer
+	source       TmeSource
 }
 
 type tmeAccessConfig struct {
@@ -37,8 +62,8 @@ type tmeAccessConfig struct {
 	token    string
 }
 
-func NewTmeRepository(client httpClient, tmeBaseURL string, userName string, password string, token string, maxRecords int, slices int, taxonomyName string, modelTransformer modelTransformer) Repository {
-	return &tmeRepository{httpClient: client, tmeBaseURL: tmeBaseURL, accessConfig: tmeAccessConfig{userName: userName, password: password, token: token}, maxRecords: maxRecords, slices: slices, taxonomyName: taxonomyName, transformer: modelTransformer}
+func NewTmeRepository(client httpClient, tmeBaseURL string, userName string, password string, token string, maxRecords int, slices int, taxonomyName string, source TmeSource, modelTransformer modelTransformer) Repository {
+	return &tmeRepository{httpClient: client, tmeBaseURL: tmeBaseURL, accessConfig: tmeAccessConfig{userName: userName, password: password, token: token}, maxRecords: maxRecords, slices: slices, taxonomyName: taxonomyName, source: source, transformer: modelTransformer}
 }
 
 func (t *tmeRepository) GetTmeTermsFromIndex(startRecord int) ([]interface{}, error) {
@@ -80,7 +105,8 @@ func (t *tmeRepository) GetTmeTermsFromIndex(startRecord int) ([]interface{}, er
 }
 
 func (t *tmeRepository) getTmeTermsInChunks(startPosition int, maxRecords int) ([]interface{}, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/authorityfiles/%s/terms?maximumRecords=%d&startRecord=%d", t.tmeBaseURL, t.taxonomyName, maxRecords, startPosition), nil)
+	url := fmt.Sprintf("%s/rs/%s/%s/%s?maximumRecords=%d&startRecord=%d", t.tmeBaseURL, t.source.String(), t.taxonomyName, t.source.PathSuffix(), maxRecords, startPosition)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +137,7 @@ func (t *tmeRepository) getTmeTermsInChunks(startPosition int, maxRecords int) (
 }
 
 func (t *tmeRepository) GetTmeTermById(rawId string) (interface{}, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/authorityfiles/%s/terms/%s", t.tmeBaseURL, t.taxonomyName, rawId), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/%s/%s/%s/%s", t.tmeBaseURL, t.source.String(), t.taxonomyName, t.source.PathSuffix(), rawId), nil)
 	if err != nil {
 		return nil, err
 	}

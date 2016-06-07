@@ -7,21 +7,28 @@ import (
 	"sync"
 )
 
-type TmeSource int
-
-const (
-	AuthorityFiles TmeSource = iota
-	KnowledgeBases
-)
-
-var sourceName = [...]string{
-	"authorityfiles",
-	"knowledgebases",
+type TmeSource interface {
+	String() string
+	PathSuffix() string
 }
 
-var sourcePathSuffix = [...]string{
-	"terms",
-	"eng/categories",
+type AuthorityFiles struct{}
+type KnowledgeBases struct{}
+
+func (s *AuthorityFiles) String() string {
+	return "authorityfiles"
+}
+
+func (s *AuthorityFiles) PathSuffix() string {
+	return "terms"
+}
+
+func (s *KnowledgeBases) String() string {
+	return "knowledgebases"
+}
+
+func (s *KnowledgeBases) PathSuffix() string {
+	return "eng/categories"
 }
 
 type Repository interface {
@@ -98,7 +105,7 @@ func (t *tmeRepository) GetTmeTermsFromIndex(startRecord int) ([]interface{}, er
 }
 
 func (t *tmeRepository) getTmeTermsInChunks(startPosition int, maxRecords int) ([]interface{}, error) {
-	url := fmt.Sprintf("%s/rs/%s/%s/%s?maximumRecords=%d&startRecord=%d", t.tmeBaseURL, t.source.String(), t.taxonomyName, sourcePathSuffix[t.source], maxRecords, startPosition)
+	url := fmt.Sprintf("%s/rs/%s/%s/%s?maximumRecords=%d&startRecord=%d", t.tmeBaseURL, t.source.String(), t.taxonomyName, t.source.PathSuffix(), maxRecords, startPosition)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -130,7 +137,7 @@ func (t *tmeRepository) getTmeTermsInChunks(startPosition int, maxRecords int) (
 }
 
 func (t *tmeRepository) GetTmeTermById(rawId string) (interface{}, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/authorityfiles/%s/terms/%s", t.tmeBaseURL, t.taxonomyName, rawId), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/rs/%s/%s/%s/%s", t.tmeBaseURL, t.source.String(), t.taxonomyName, t.source.PathSuffix(), rawId), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -154,8 +161,4 @@ func (t *tmeRepository) GetTmeTermById(rawId string) (interface{}, error) {
 	}
 
 	return t.transformer.UnMarshallTerm(contents)
-}
-
-func (s TmeSource) String() string {
-	return sourceName[s]
 }

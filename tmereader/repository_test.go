@@ -152,11 +152,33 @@ func (*dummyTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 }
 
 func authorityFilesRepo(c dummyClient) Repository {
-	return &tmeRepository{httpClient: &c, tmeBaseURL: c.tmeBaseURL, accessConfig: tmeAccessConfig{userName: "test", password: "test", token: "test"}, maxRecords: 100, slices: 1, taxonomyName: "GL", source: &AuthorityFiles{}, transformer: new(dummyTransformer)}
+	return NewTimeRepositoryWithConfig(tmeRepositoryConfig{
+		client: &c,
+		tmeBaseURL: c.tmeBaseURL,
+		userName: "test",
+		password: "test",
+		token: "test",
+		maxRecords: 100,
+		slices: 1,
+		taxonomyName: "GL",
+		source: &AuthorityFiles{},
+		modelTransformer: new(dummyTransformer),
+	})
 }
 
 func knowledgeBasesRepo(c dummyClient) Repository {
-	return &tmeRepository{httpClient: &c, tmeBaseURL: c.tmeBaseURL, accessConfig: tmeAccessConfig{userName: "test", password: "test", token: "test"}, maxRecords: 100, slices: 1, taxonomyName: "GL", source: &KnowledgeBases{}, transformer: new(dummyTransformer)}
+	return NewTimeRepositoryWithConfig(tmeRepositoryConfig{
+		client: &c,
+		tmeBaseURL: c.tmeBaseURL,
+		userName: "test",
+		password: "test",
+		token: "test",
+		maxRecords: 100,
+		slices: 1,
+		taxonomyName: "GL",
+		source: &KnowledgeBases{},
+		modelTransformer: new(dummyTransformer),
+	})
 }
 
 func getFileReader(assert *assert.Assertions, name string) io.ReadCloser {

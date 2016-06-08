@@ -66,6 +66,32 @@ func NewTmeRepository(client httpClient, tmeBaseURL string, userName string, pas
 	return &tmeRepository{httpClient: client, tmeBaseURL: tmeBaseURL, accessConfig: tmeAccessConfig{userName: userName, password: password, token: token}, maxRecords: maxRecords, slices: slices, taxonomyName: taxonomyName, source: source, transformer: modelTransformer}
 }
 
+type tmeRepositoryConfig struct {
+	client httpClient
+	tmeBaseURL string
+	userName string
+	password string
+	token string
+	maxRecords int
+	slices int
+	taxonomyName string
+	source TmeSource
+	modelTransformer modelTransformer
+}
+
+func NewTimeRepositoryWithConfig(cfg tmeRepositoryConfig) Repository {
+	return &tmeRepository{
+		httpClient: cfg.client,
+		tmeBaseURL: cfg.tmeBaseURL,
+		accessConfig: tmeAccessConfig{userName: cfg.userName, password: cfg.password, token: cfg.token},
+		maxRecords: cfg.maxRecords,
+		slices: cfg.slices,
+		taxonomyName: cfg.taxonomyName,
+		source: cfg.source,
+		transformer: cfg.modelTransformer,
+	}
+}
+
 func (t *tmeRepository) GetTmeTermsFromIndex(startRecord int) ([]interface{}, error) {
 	chunks := t.maxRecords / t.slices
 

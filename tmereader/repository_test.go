@@ -152,7 +152,7 @@ func (*dummyTransformer) UnMarshallTerm(content []byte) (interface{}, error) {
 }
 
 func authorityFilesRepo(c dummyClient) Repository {
-	return NewTimeRepositoryWithConfig(tmeRepositoryConfig{
+	return NewTimeRepositoryWithConfig(TmeRepositoryConfig{
 		client: &c,
 		tmeBaseURL: c.tmeBaseURL,
 		userName: "test",
@@ -167,7 +167,7 @@ func authorityFilesRepo(c dummyClient) Repository {
 }
 
 func knowledgeBasesRepo(c dummyClient) Repository {
-	return NewTimeRepositoryWithConfig(tmeRepositoryConfig{
+	return NewTimeRepositoryWithConfig(TmeRepositoryConfig{
 		client: &c,
 		tmeBaseURL: c.tmeBaseURL,
 		userName: "test",

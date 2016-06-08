@@ -20,7 +20,7 @@ Available methods:
 
 To run, create a new repository, e.g.:
 
-    NewTimeRepositoryWithConfig(tmeRepositoryConfig{
+    NewTimeRepositoryWithConfig(TmeRepositoryConfig{
             client: &client,
             tmeBaseURL: ,
             userName: "username",

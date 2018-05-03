@@ -1,0 +1,9 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/tme-reader
+workflows:
+  version: 2
+  build_directory:
+    jobs:
+      - build

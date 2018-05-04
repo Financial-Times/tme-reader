@@ -26,9 +26,6 @@ jobs:
           name: Go get
           command: go get -t -d -v ./...
       - run:
-          name: Go Build
-          command: go build -v
-      - run:
           name: Run Tests
           command: |
             go test -race -v ./... | /go/bin/go-junit-report > ${CIRCLE_TEST_REPORTS}/main.xml

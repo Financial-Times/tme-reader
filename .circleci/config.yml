@@ -7,7 +7,6 @@ jobs:
         environment:
           GOPATH: /go
           CIRCLE_TEST_REPORTS: /tmp/test-results
-          CIRCLE_COVERAGE_REPORT: /tmp/coverage-results
     steps:
       - checkout
       - run:
@@ -29,12 +28,6 @@ jobs:
           name: Run Tests
           command: |
             go test -race -v ./... | /go/bin/go-junit-report > ${CIRCLE_TEST_REPORTS}/main.xml
-            goverage -covermode=atomic -race -coverprofile=${CIRCLE_COVERAGE_REPORT}/coverage.out ./...
-      - run:
-          name: Upload Coverage
-          command: /go/bin/goveralls -coverprofile=${CIRCLE_COVERAGE_REPORT}/coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
-      - store_test_results:
-          path: /tmp/test-results
 workflows:
   version: 2
   test-and-build:
